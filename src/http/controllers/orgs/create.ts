@@ -7,7 +7,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createBodySchema = z.object({
     name: z.string(),
     owner: z.string(),
-    email: z.string().email(),
+    email: z.string().email().toLowerCase(),
     zip_code: z.string(),
     address: z.string(),
     address_number: z.string(),

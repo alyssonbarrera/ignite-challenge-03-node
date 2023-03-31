@@ -3,7 +3,7 @@ import request from 'supertest'
 import { orgData } from '@/utils/test/org-data'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-describe('Create (E2E', () => {
+describe('Create (E2E)', () => {
   beforeAll(async () => {
     app.ready()
   })

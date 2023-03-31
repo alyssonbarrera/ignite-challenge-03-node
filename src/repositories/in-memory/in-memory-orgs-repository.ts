@@ -57,7 +57,10 @@ export class InMemoryOrgsRepository implements OrgsRepository {
     const orgIndex = this.orgs.findIndex((org) => org.id === id)
 
     if (orgIndex >= 0) {
-      this.orgs[orgIndex] = this.orgs[orgIndex] as Org
+      this.orgs[orgIndex] = {
+        ...this.orgs[orgIndex],
+        ...data,
+      } as Org
     }
     return this.orgs[orgIndex]
   }

@@ -26,7 +26,7 @@ describe('Create Org Use Case', () => {
     await expect(sut.execute(orgData)).rejects.toBeInstanceOf(AppError)
   })
 
-  it('should hash user password upon registration', async () => {
+  it('should hash org password upon registration', async () => {
     const { org } = await sut.execute(orgData)
 
     const isPasswordCorrectlyHashed = await compare(

@@ -36,13 +36,29 @@ export class PrismaOrgsRepository implements OrgsRepository {
       where: {
         name: {
           contains: query,
+          mode: 'insensitive',
         },
       },
       take: 20,
       skip: (page - 1) * 20,
+      select: {
+        id: true,
+        name: true,
+        owner: true,
+        email: true,
+        zip_code: true,
+        address: true,
+        address_number: true,
+        neighborhood: true,
+        city: true,
+        state: true,
+        whatsapp: true,
+        password: false,
+        created_at: true,
+      },
     })
 
-    return orgs
+    return orgs as Org[]
   }
 
   async update(id: string, data: Prisma.OrgUpdateInput): Promise<Org> {
