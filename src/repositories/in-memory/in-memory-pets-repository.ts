@@ -1,12 +1,15 @@
 import { Prisma, Pet } from '@prisma/client'
 import { randomUUID } from 'node:crypto'
 import {
+  PetsAndOrgs,
   PetsRepository,
   SearchByCaracteristicsParams,
 } from '../pets-repository'
+import { PetSelectDTO } from '../dtos/pet-select-dto'
 
 export class InMemoryPetsRepository implements PetsRepository {
   public pets: Pet[] = []
+  public petsAndOrgs: PetSelectDTO[] = []
 
   async create(data: Prisma.PetUncheckedCreateInput): Promise<Pet> {
     const pet = {
@@ -15,10 +18,10 @@ export class InMemoryPetsRepository implements PetsRepository {
       photos: data.photos,
       presentation: data.presentation,
       energy_level: data.energy_level,
-      suitable_environments: data.suitable_environments,
+      suitable_environment: data.suitable_environment,
       size: data.size,
-      home_restrictions: data.home_restrictions,
-      climate_preferences: data.climate_preferences,
+      home_restriction: data.home_restriction,
+      climate_preference: data.climate_preference,
       health_issues: data.health_issues,
       org_id: data.org_id,
       created_at: new Date(),
@@ -52,19 +55,34 @@ export class InMemoryPetsRepository implements PetsRepository {
   }
 
   async searchByCaracteristics(
-    { property, query }: SearchByCaracteristicsParams,
+    { property, value }: SearchByCaracteristicsParams,
     page: number,
   ): Promise<Pet[]> {
     return this.pets
-      .filter((pet) => pet[property].includes(query))
+      .filter((pet) => pet[property].includes(value))
       .slice((page - 1) * 20, page * 20)
+  }
+
+  async findByCity(city: string, page: number): Promise<PetsAndOrgs[] | null> {
+    const pets = this.petsAndOrgs
+      .filter((pet) => pet.organization.city === city)
+      .slice((page - 1) * 20, page * 20)
+
+    if (!pets) {
+      return null
+    }
+
+    return pets
   }
 
   async update(id: string, data: Prisma.PetUpdateInput): Promise<Pet> {
     const petIndex = this.pets.findIndex((pet) => pet.id === id)
 
     if (petIndex >= 0) {
-      this.pets[petIndex] = this.pets[petIndex] as Pet
+      this.pets[petIndex] = {
+        ...this.pets[petIndex],
+        ...data,
+      } as Pet
     }
     return this.pets[petIndex]
   }

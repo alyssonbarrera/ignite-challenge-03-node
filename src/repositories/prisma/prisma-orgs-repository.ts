@@ -1,6 +1,20 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma, Org } from '@prisma/client'
-import { OrgsRepository } from '../orgs-repository'
+import { OrgWithPets, OrgsRepository } from '../orgs-repository'
+
+export const PrismaOrganizationSelect = {
+  id: true,
+  name: true,
+  email: true,
+  owner: true,
+  zip_code: true,
+  address: true,
+  address_number: true,
+  neighborhood: true,
+  city: true,
+  state: true,
+  whatsapp: true,
+}
 
 export class PrismaOrgsRepository implements OrgsRepository {
   async create(data: Prisma.OrgCreateInput): Promise<Org> {
@@ -31,7 +45,35 @@ export class PrismaOrgsRepository implements OrgsRepository {
     return org
   }
 
-  async searchMany(query: string, page: number): Promise<Org[]> {
+  async findByCity(city: string, page: number): Promise<OrgWithPets[] | null> {
+    const orgs = await prisma.org.findMany({
+      where: {
+        city,
+      },
+      take: 20,
+      skip: (page - 1) * 20,
+      select: {
+        ...PrismaOrganizationSelect,
+        pets: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    const orgsWithPets = orgs?.map((org) => {
+      const pets = org.pets?.map((pet) => pet.id)
+      return {
+        ...org,
+        pets,
+      }
+    })
+
+    return orgsWithPets
+  }
+
+  async searchMany(query: string, page: number): Promise<OrgWithPets[]> {
     const orgs = await prisma.org.findMany({
       where: {
         name: {
@@ -42,23 +84,24 @@ export class PrismaOrgsRepository implements OrgsRepository {
       take: 20,
       skip: (page - 1) * 20,
       select: {
-        id: true,
-        name: true,
-        owner: true,
-        email: true,
-        zip_code: true,
-        address: true,
-        address_number: true,
-        neighborhood: true,
-        city: true,
-        state: true,
-        whatsapp: true,
-        password: false,
-        created_at: true,
+        ...PrismaOrganizationSelect,
+        pets: {
+          select: {
+            id: true,
+          },
+        },
       },
     })
 
-    return orgs as Org[]
+    const orgsWithPets = orgs?.map((org) => {
+      const pets = org.pets?.map((pet) => pet.id)
+      return {
+        ...org,
+        pets,
+      }
+    })
+
+    return orgsWithPets
   }
 
   async update(id: string, data: Prisma.OrgUpdateInput): Promise<Org> {

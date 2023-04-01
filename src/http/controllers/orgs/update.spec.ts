@@ -20,7 +20,7 @@ describe('Update Org (E2E)', () => {
       name: 'New Org Name',
     })
 
-    expect(response.status).toEqual(200)
+    expect(response.status).toEqual(204)
   })
 
   it('should not be able to update org with wrong id', async () => {

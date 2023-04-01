@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { Prisma, Org } from '@prisma/client'
-import { OrgsRepository } from '../orgs-repository'
+import { OrgWithPets, OrgsRepository } from '../orgs-repository'
 
 export class InMemoryOrgsRepository implements OrgsRepository {
   public orgs: Org[] = []
@@ -47,9 +47,53 @@ export class InMemoryOrgsRepository implements OrgsRepository {
     return org
   }
 
-  async searchMany(query: string, page: number): Promise<Org[]> {
+  async findByCity(city: string, page: number): Promise<OrgWithPets[] | null> {
+    const orgs = this.orgs
+      .filter((org) => org.city === city)
+      .map((org) => {
+        return {
+          id: org.id,
+          name: org.name,
+          email: org.email,
+          owner: org.owner,
+          zip_code: org.zip_code,
+          address: org.address,
+          address_number: org.address_number,
+          neighborhood: org.neighborhood,
+          city: org.city,
+          state: org.state,
+          whatsapp: org.whatsapp,
+          pets: [],
+        } as OrgWithPets
+      })
+      .slice((page - 1) * 20, page * 20)
+
+    if (!orgs) {
+      return null
+    }
+
+    return orgs
+  }
+
+  async searchMany(query: string, page: number): Promise<OrgWithPets[]> {
     return this.orgs
       .filter((org) => org.name.includes(query))
+      .map((org) => {
+        return {
+          id: org.id,
+          name: org.name,
+          email: org.email,
+          owner: org.owner,
+          zip_code: org.zip_code,
+          address: org.address,
+          address_number: org.address_number,
+          neighborhood: org.neighborhood,
+          city: org.city,
+          state: org.state,
+          whatsapp: org.whatsapp,
+          pets: [],
+        } as OrgWithPets
+      })
       .slice((page - 1) * 20, page * 20)
   }
 

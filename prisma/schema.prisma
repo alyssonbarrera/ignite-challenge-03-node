@@ -24,24 +24,47 @@ model Org {
   whatsapp       String
   password       String
   created_at     DateTime @default(now())
-  Pet            Pet[]
+
+  pets Pet[]
 
   @@map("orgs")
 }
 
-model Pet {
-  id                    String   @id @default(uuid())
-  name                  String
-  photos                String[]
-  presentation          String
-  energy_level          String
-  suitable_environments String
-  size                  String
-  home_restrictions     String
-  climate_preferences   String
-  health_issues         String
+enum PetSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
 
-  organization Org    @relation(fields: [org_id], references: [id])
+enum HomeRestriction {
+  APARTMENT
+  HOUSE
+  CONDOMINIUM
+  URBAN
+  RURAL
+  SHARED
+}
+
+enum ClimatePreference {
+  HOT
+  COLD
+  TEMPERATE
+  DRY
+}
+
+model Pet {
+  id                   String            @id @default(uuid())
+  name                 String
+  photos               String[]
+  presentation         String
+  energy_level         String
+  suitable_environment String
+  size                 PetSize
+  home_restriction     HomeRestriction
+  climate_preference   ClimatePreference
+  health_issues        String[]
+
+  organization Org    @relation(fields: [org_id], references: [id], onDelete: Cascade)
   org_id       String
 
   @@map("pets")

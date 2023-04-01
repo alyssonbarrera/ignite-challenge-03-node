@@ -1,3 +1,12 @@
+-- CreateEnum
+CREATE TYPE "PetSize" AS ENUM ('SMALL', 'MEDIUM', 'LARGE');
+
+-- CreateEnum
+CREATE TYPE "HomeRestriction" AS ENUM ('APARTMENT', 'HOUSE', 'CONDOMINIUM', 'URBAN', 'RURAL', 'SHARED');
+
+-- CreateEnum
+CREATE TYPE "ClimatePreference" AS ENUM ('HOT', 'COLD', 'TEMPERATE', 'DRY');
+
 -- CreateTable
 CREATE TABLE "orgs" (
     "id" TEXT NOT NULL,
@@ -23,12 +32,12 @@ CREATE TABLE "pets" (
     "name" TEXT NOT NULL,
     "photos" TEXT[],
     "presentation" TEXT NOT NULL,
-    "energy_level" TEXT NOT NULL,
-    "suitable_environments" TEXT NOT NULL,
-    "size" TEXT NOT NULL,
-    "home_restrictions" TEXT NOT NULL,
-    "climate_preferences" TEXT NOT NULL,
-    "health_issues" TEXT NOT NULL,
+    "energy_level" INTEGER NOT NULL,
+    "suitable_environment" TEXT NOT NULL,
+    "size" "PetSize" NOT NULL,
+    "home_restriction" "HomeRestriction" NOT NULL,
+    "climate_preference" "ClimatePreference" NOT NULL,
+    "health_issues" TEXT[],
     "org_id" TEXT NOT NULL,
 
     CONSTRAINT "pets_pkey" PRIMARY KEY ("id")

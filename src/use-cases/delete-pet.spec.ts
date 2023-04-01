@@ -1,26 +1,35 @@
 import { AppError } from '@/errors/AppError'
-import { DeleteOrgUseCase } from './delete-org'
 import { orgData } from '@/utils/test/org-data'
+import { petData } from '@/utils/test/pet-data'
+import { DeletePetUseCase } from './delete-pet'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
+import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
 
+let petsRepository: InMemoryPetsRepository
 let orgsRepository: InMemoryOrgsRepository
-let sut: DeleteOrgUseCase
+let sut: DeletePetUseCase
 
-describe('Delete Org', () => {
+describe('Delete Pet', () => {
   beforeEach(() => {
+    petsRepository = new InMemoryPetsRepository()
     orgsRepository = new InMemoryOrgsRepository()
-    sut = new DeleteOrgUseCase(orgsRepository)
+    sut = new DeletePetUseCase(petsRepository)
   })
 
   it('should be able to delete org', async () => {
     const createOrg = await orgsRepository.create(orgData)
 
-    await sut.execute(createOrg.id)
+    const createPet = await petsRepository.create({
+      ...petData,
+      org_id: createOrg.id,
+    })
 
-    const org = await orgsRepository.findById(createOrg.id)
+    await sut.execute(createPet.id)
 
-    expect(org).toEqual(null)
+    const pet = await petsRepository.findById(createPet.id)
+
+    expect(pet).toEqual(null)
   })
 
   it('should not be able to delete org if not exists', async () => {
