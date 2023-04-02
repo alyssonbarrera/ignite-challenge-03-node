@@ -10,10 +10,12 @@ export async function deleteOrg(request: FastifyRequest, reply: FastifyReply) {
 
   const { id } = deleteOrgParamsSchema.parse(request.params)
 
+  const payload = request.user
+
   try {
     const deleteOrgUseCase = makeDeleteOrgUseCase()
 
-    await deleteOrgUseCase.execute(id)
+    await deleteOrgUseCase.execute(id, payload)
   } catch (error) {
     if (error instanceof AppError) {
       return reply.status(error.statusCode).send({ message: error.message })

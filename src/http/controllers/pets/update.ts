@@ -23,8 +23,15 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
     id: z.string().uuid(),
   })
 
+  const updateQuerySchema = z.object({
+    org_id: z.string().uuid(),
+  })
+
   const { id } = updateParamsSchema.parse(request.params)
+  const { org_id } = updateQuerySchema.parse(request.query)
   const data = updateBodySchema.parse(request.body)
+
+  const payload = request.user
 
   try {
     const updatePetUseCase = makeUpdatePetUseCase()
@@ -32,6 +39,8 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
     await updatePetUseCase.execute({
       id,
       data,
+      org_id,
+      payload,
     })
   } catch (error) {
     if (error instanceof AppError) {

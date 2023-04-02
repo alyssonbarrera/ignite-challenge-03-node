@@ -1,7 +1,6 @@
 import { Prisma, Pet } from '@prisma/client'
 import { randomUUID } from 'node:crypto'
 import {
-  PetsAndOrgs,
   PetsRepository,
   SearchByCaracteristicsParams,
 } from '../pets-repository'
@@ -63,7 +62,7 @@ export class InMemoryPetsRepository implements PetsRepository {
       .slice((page - 1) * 20, page * 20)
   }
 
-  async findByCity(city: string, page: number): Promise<PetsAndOrgs[] | null> {
+  async findByCity(city: string, page: number): Promise<PetSelectDTO[] | null> {
     const pets = this.petsAndOrgs
       .filter((pet) => pet.organization.city === city)
       .slice((page - 1) * 20, page * 20)

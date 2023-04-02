@@ -14,7 +14,7 @@ describe('Search By Caracteristics (E2E)', () => {
   it('should be able to search pets by caracteristics', async () => {
     const petId = '5444ca02-d02a-11ed-afa1-0242ac120002'
 
-    await createOrgAndPet(app)
+    await createOrgAndPet()
 
     const response = await request(app.server)
       .get(`/pets/search`)
@@ -59,8 +59,6 @@ describe('Search By Caracteristics (E2E)', () => {
         page: 1,
       })
       .send()
-
-    console.log(response.body)
 
     expect(response.status).toEqual(400)
   })

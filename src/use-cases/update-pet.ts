@@ -22,6 +22,11 @@ interface UpdatePetUseCaseRequest {
     health_issues?: string | string[]
     org_id?: string
   }
+  org_id: string
+  payload: {
+    sub: string
+    role: 'ADMIN' | 'MEMBER'
+  }
 }
 
 interface UpdatePetUseCaseResponse {
@@ -34,11 +39,17 @@ export class UpdatePetUseCase {
   async execute({
     id,
     data,
+    org_id,
+    payload,
   }: UpdatePetUseCaseRequest): Promise<UpdatePetUseCaseResponse> {
     const pet = await this.petsRepository.findById(id)
 
     if (!pet) {
       throw new AppError('Pet not found', 404)
+    }
+
+    if (payload.role !== 'ADMIN' && payload.sub !== org_id) {
+      throw new AppError('You are not allowed to update this pet', 403)
     }
 
     const petUpdated = await this.petsRepository.update(id, data)

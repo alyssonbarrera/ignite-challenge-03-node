@@ -18,6 +18,10 @@ interface UpdateOrgUseCaseRequest {
     whatsapp?: string
     password?: string
   }
+  payload: {
+    sub: string
+    role: 'ADMIN' | 'MEMBER'
+  }
 }
 
 interface UpdateOrgUseCaseResponse {
@@ -30,7 +34,12 @@ export class UpdateOrgUseCase {
   async execute({
     id,
     data,
+    payload,
   }: UpdateOrgUseCaseRequest): Promise<UpdateOrgUseCaseResponse> {
+    if (payload.role !== 'ADMIN') {
+      id = payload.sub
+    }
+
     const org = await this.orgsRepository.findById(id)
 
     if (!org) {

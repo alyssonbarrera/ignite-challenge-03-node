@@ -22,6 +22,10 @@ describe('Update Org Use Case', () => {
         name: 'New Org Name',
         password: 'newpassword',
       },
+      payload: {
+        sub: createOrg.id,
+        role: 'MEMBER',
+      },
     })
 
     expect(orgUpdated.name).toEqual('New Org Name')
@@ -36,6 +40,10 @@ describe('Update Org Use Case', () => {
       id: createOrg.id,
       data: {
         password,
+      },
+      payload: {
+        sub: createOrg.id,
+        role: 'MEMBER',
       },
     })
 

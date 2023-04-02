@@ -25,12 +25,15 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
   const { id } = updateParamsSchema.parse(request.params)
   const data = updateBodySchema.parse(request.body)
 
+  const payload = request.user
+
   try {
     const updateOrgUseCase = makeUpdateOrgUseCase()
 
     await updateOrgUseCase.execute({
       id,
       data,
+      payload,
     })
   } catch (error) {
     if (error instanceof AppError) {

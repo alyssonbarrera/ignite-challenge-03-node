@@ -1,11 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma, Pet } from '@prisma/client'
 import {
-  PetsAndOrgs,
   PetsRepository,
   SearchByCaracteristicsParams,
 } from '../pets-repository'
 import { PrismaOrganizationSelect } from './prisma-orgs-repository'
+import { PetSelectDTO } from '../dtos/pet-select-dto'
 
 export const PrismaPetSelect = {
   id: true,
@@ -77,8 +77,8 @@ export class PrismaPetsRepository implements PetsRepository {
     return pets
   }
 
-  async findByCity(city: string, page: number): Promise<PetsAndOrgs[] | null> {
-    const pets = await prisma.$queryRaw<PetsAndOrgs[]>`
+  async findByCity(city: string, page: number): Promise<PetSelectDTO[] | null> {
+    const pets = await prisma.$queryRaw<PetSelectDTO[]>`
     SELECT "pets".*
     FROM "pets"
     INNER JOIN "orgs" ON "pets"."org_id" = "orgs"."id"
@@ -86,7 +86,6 @@ export class PrismaPetsRepository implements PetsRepository {
     LIMIT 20
     OFFSET ${(page - 1) * 20}
   `
-
     return pets
   }
 

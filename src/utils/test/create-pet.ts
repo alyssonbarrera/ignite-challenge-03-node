@@ -1,8 +1,7 @@
-import { prisma } from '@/lib/prisma'
-import { FastifyInstance } from 'fastify'
 import { petData } from './pet-data'
+import { prisma } from '@/lib/prisma'
 
-export async function createPet(app: FastifyInstance) {
+export async function createPet() {
   const petId = '6444ca02-d02a-11ed-afa1-0242ac120002'
   const orgId = '3f2def52-cff1-11ed-afa1-0242ac120002'
 

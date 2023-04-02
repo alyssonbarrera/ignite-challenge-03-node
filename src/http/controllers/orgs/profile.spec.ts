@@ -14,7 +14,7 @@ describe('Profile (E2E)', () => {
   it('should be able to get org profile', async () => {
     const id = '3f2def52-cff1-11ed-afa1-0242ac120002'
 
-    await createOrg(app)
+    await createOrg()
 
     const response = await request(app.server).get(`/orgs/${id}`).send()
 
