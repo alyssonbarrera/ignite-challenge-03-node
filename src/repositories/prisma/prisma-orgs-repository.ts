@@ -74,34 +74,21 @@ export class PrismaOrgsRepository implements OrgsRepository {
   }
 
   async searchMany(query: string, page: number): Promise<OrgWithPets[]> {
-    const orgs = await prisma.org.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      take: 20,
-      skip: (page - 1) * 20,
-      select: {
-        ...PrismaOrganizationSelect,
-        pets: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    })
-
-    const orgsWithPets = orgs?.map((org) => {
-      const pets = org.pets?.map((pet) => pet.id)
+    const orgs = await prisma.$queryRaw<OrgWithPets[]>`
+      SELECT "orgs"."id", "orgs"."name", "orgs"."email", "orgs"."owner", "orgs"."zip_code", "orgs"."address", "orgs"."address_number", "orgs"."neighborhood", "orgs"."city", "orgs"."state", "orgs"."whatsapp", array_agg("pets"."id") as "pets"
+      FROM "orgs"
+      LEFT JOIN "pets" ON "orgs"."id" = "pets"."org_id"
+      WHERE translate(lower("orgs"."name"), 'áàãâéêíóôõúüçÁÀÃÂÉÊÍÓÔÕÚÜÇ', 'aaaaeeiooouucAAAAEEIOOOUUC') LIKE ${`%${query}%`}
+      GROUP BY "orgs"."id", "orgs"."name", "orgs"."email", "orgs"."owner", "orgs"."zip_code", "orgs"."address", "orgs"."address_number", "orgs"."neighborhood", "orgs"."city", "orgs"."state", "orgs"."whatsapp"
+      LIMIT 20
+      OFFSET ${(page - 1) * 20}
+    `
+    return orgs.map((org) => {
       return {
         ...org,
-        pets,
+        pets: org.pets?.filter((pet) => pet !== null),
       }
     })
-
-    return orgsWithPets
   }
 
   async update(id: string, data: Prisma.OrgUpdateInput): Promise<Org> {

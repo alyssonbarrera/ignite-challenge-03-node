@@ -4,8 +4,8 @@ import {
   PetsRepository,
   SearchByCaracteristicsParams,
 } from '../pets-repository'
-import { PrismaOrganizationSelect } from './prisma-orgs-repository'
 import { PetSelectDTO } from '../dtos/pet-select-dto'
+import { PrismaOrganizationSelect } from './prisma-orgs-repository'
 
 export const PrismaPetSelect = {
   id: true,
